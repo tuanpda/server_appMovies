@@ -26,7 +26,6 @@ app.get('/', (req, res) => {
 
 
 app.use('/api/users', require('./api/users'));
-app.use('/api/nodemailer', require('./api/nodemailer'));
 app.use('/api/tochucdvt', require('./api/tochucdvt'));
 
 app.listen(process.env.PORT, () => {
