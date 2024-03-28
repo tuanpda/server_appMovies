@@ -1,0 +1,4 @@
+thông tin máy chủ: 125.212.224.205
+dbnam: tuanphan_phimhay
+username_sql: tuanphan_phimhay
+pass: qv3eL3^16
