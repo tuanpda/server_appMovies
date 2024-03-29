@@ -14,14 +14,20 @@ const { pool } = require("../database/dbinfo");
 //   }
 // });
 
-// get all movies with categories
+// get all movies with categories hỗ trợ phân trang và limit
 router.get("/get-all-movie-with-cat", async (req, res) => {
   try {
+    const { category, page = 1, limit = 10 } = req.query;
+    const offset = (page - 1) * limit;
+    
     await pool.connect();
     const result = await pool
       .request()
-      .input("category", req.query.category)
-      .query(`SELECT * FROM movies where category = @category`);
+      .input("category", category)
+      .input("offset", offset)
+      .input("limit", limit)
+      .query(`SELECT * FROM movies WHERE category = @category ORDER BY _id OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY`);
+    
     const movies = result.recordset;
     res.json({ data: movies, success: true });
   } catch (error) {
