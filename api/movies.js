@@ -44,7 +44,7 @@ const { pool } = require("../database/dbinfo");
 router.get("/get-all-movie-with-cat", async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1; // Chuyển đổi page thành số nguyên
-    const limit = parseInt(req.query.limit, 10) || 5;
+    const limit = parseInt(req.query.limit, 10) || 10;
     const offset = (page - 1) * limit;
     // console.log(offset);
     // console.log(typeof(offset));
