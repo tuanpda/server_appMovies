@@ -72,11 +72,18 @@ router.get("/get-all-movie-with-cat", async (req, res) => {
     const totalPages = Math.ceil(totalCount / limit);
 
     // Tạo đối tượng info
+    // const info = {
+    //   count: totalCount,
+    //   pages: totalPages,
+    //   next: page < totalPages ? `${req.protocol}://${req.get('host')}${req.baseUrl}${req.path}?page=${page + 1}&category=${category}` : null,
+    //   prev: page > 1 ? `${req.protocol}://${req.get('host')}${req.baseUrl}${req.path}?page=${page - 1}&category=${category}` : null
+    // };
+
     const info = {
       count: totalCount,
       pages: totalPages,
-      next: page < totalPages ? `${req.protocol}://${req.get('host')}${req.baseUrl}${req.path}?page=${page + 1}&category=${category}` : null,
-      prev: page > 1 ? `${req.protocol}://${req.get('host')}${req.baseUrl}${req.path}?page=${page - 1}&category=${category}` : null
+      next: page < totalPages ? `${req.path}?page=${page + 1}&category=${category}` : null,
+      prev: page > 1 ? `${req.path}?page=${page - 1}&category=${category}` : null
     };
 
     // Tạo đối tượng JSON phản hồi
