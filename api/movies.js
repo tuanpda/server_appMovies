@@ -18,7 +18,7 @@ const { pool } = require("../database/dbinfo");
 router.get("/names-of-movies", async (req, res) => {
   try {
     await pool.connect();
-    const result = await pool.request().query(`SELECT _id, title FROM movies`);
+    const result = await pool.request().query(`SELECT _id, title, year FROM movies`);
     const title_movies = result.recordset;
     res.json({ data: title_movies, success: true });
   } catch (error) {
