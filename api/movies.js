@@ -18,7 +18,9 @@ const { pool } = require("../database/dbinfo");
 router.get("/names-of-movies", async (req, res) => {
   try {
     await pool.connect();
-    const result = await pool.request().query(`SELECT _id, title, year FROM movies`);
+    const result = await pool
+      .request()
+      .query(`SELECT _id, title, year FROM movies`);
     const title_movies = result.recordset;
     res.json({ data: title_movies, success: true });
   } catch (error) {
@@ -147,4 +149,17 @@ router.get("/get-top-10-movie-kinhdi", async (req, res) => {
   }
 });
 
+router.get("/get-one-film/:_id", async (req, res) => {
+  try {
+    await pool.connect();
+    const result = await pool
+      .request()
+      .input("_id", req.params._id)
+      .query(`select * from movies where _id=@_id`);
+    const movies = result.recordset;
+    res.json({ data: movies, success: true });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
 module.exports = router;
