@@ -26,7 +26,22 @@ router.get("/names-of-movies", async (req, res) => {
   }
 });
 
+// get film with title
+router.get("/get-film-with-title", async (req, res) => {
+  try {
+    await pool.connect();
+    const result = await pool
+      .request()
+      .input("title", req.query.title)
+      .query(`SELECT * FROM movies where title=@title`);
+    const title_movies = result.recordset;
+    res.json({ data: title_movies, success: true });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
 
+// get movie with category
 router.get("/get-all-movie-with-cat", async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1; // Chuyển đổi page thành số nguyên
@@ -47,12 +62,14 @@ router.get("/get-all-movie-with-cat", async (req, res) => {
       );
 
     const movies = result.recordset;
-    
+
     // Đếm tổng số lượng phim
     const countResult = await pool
       .request()
       .input("category", category)
-      .query(`SELECT COUNT(*) AS totalCount FROM movies WHERE category = @category`);
+      .query(
+        `SELECT COUNT(*) AS totalCount FROM movies WHERE category = @category`
+      );
     const totalCount = countResult.recordset[0].totalCount;
 
     const totalPages = Math.ceil(totalCount / limit);
@@ -68,14 +85,18 @@ router.get("/get-all-movie-with-cat", async (req, res) => {
     const info = {
       count: totalCount,
       pages: totalPages,
-      next: page < totalPages ? `${req.path}?page=${page + 1}&category=${category}` : null,
-      prev: page > 1 ? `${req.path}?page=${page - 1}&category=${category}` : null
+      next:
+        page < totalPages
+          ? `${req.path}?page=${page + 1}&category=${category}`
+          : null,
+      prev:
+        page > 1 ? `${req.path}?page=${page - 1}&category=${category}` : null,
     };
 
     // Tạo đối tượng JSON phản hồi
     const response = {
       info: info,
-      results: movies
+      results: movies,
     };
 
     res.json(response);
@@ -83,7 +104,6 @@ router.get("/get-all-movie-with-cat", async (req, res) => {
     res.status(500).json(error);
   }
 });
-
 
 // get top 10 movies hành động
 router.get("/get-top-10-movie-hanhdong", async (req, res) => {
