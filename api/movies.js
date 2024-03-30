@@ -108,6 +108,20 @@ router.get("/get-all-movie-with-cat", async (req, res) => {
 });
 
 // get top 10 movies hành động
+router.get("/get-top-10-movie-new-film", async (req, res) => {
+  try {
+    await pool.connect();
+    const result = await pool
+      .request()
+      .query(`select top 10 * from movies where category = 'NewMovie'`);
+    const movies = result.recordset;
+    res.json({ data: movies, success: true });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+// get top 10 movies hành động
 router.get("/get-top-10-movie-hanhdong", async (req, res) => {
   try {
     await pool.connect();
