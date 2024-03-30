@@ -14,32 +14,18 @@ const { pool } = require("../database/dbinfo");
 //   }
 // });
 
-// router.get("/get-all-movie-with-cat", async (req, res) => {
-//   try {
-//     const page = parseInt(req.query.page) || 1; // Chuyển đổi page thành số nguyên
-//     const limit = parseInt(req.query.limit, 10) || 10;
-//     const offset = (page - 1) * limit;
-//     // console.log(offset);
-//     // console.log(typeof(offset));
-//     const category = req.query.category;
+// get all title of movies
+router.get("/names-of-movies", async (req, res) => {
+  try {
+    await pool.connect();
+    const result = await pool.request().query(`SELECT _id, title FROM movies`);
+    const title_movies = result.recordset;
+    res.json({ data: title_movies, success: true });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
 
-//     await pool.connect();
-//     const result = await pool
-//       .request()
-//       .input("category", category)
-//       .input("offset", offset)
-//       .input("limit", limit)
-//       .query(
-//         `SELECT * FROM movies WHERE category = @category ORDER BY _id OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY`
-//       );
-
-//     const movies = result.recordset;
-//     // console.log(movies);
-//     res.json({ data: movies, success: true });
-//   } catch (error) {
-//     res.status(500).json(error);
-//   }
-// });
 
 router.get("/get-all-movie-with-cat", async (req, res) => {
   try {
