@@ -136,20 +136,6 @@ router.get("/get-top-10-movie-new-film", async (req, res) => {
   }
 });
 
-// get top 10 movies single
-router.get("/get-top-10-movie-single-film", async (req, res) => {
-  try {
-    await pool.connect();
-    const result = await pool
-      .request()
-      .query(`select top 10 * from movies where category = 'FilmSingle'`);
-    const movies = result.recordset;
-    res.json({ data: movies, success: true });
-  } catch (error) {
-    res.status(500).json(error);
-  }
-});
-
 // get top 10 movies hành động
 router.get("/get-top-10-movie-hanhdong", async (req, res) => {
   try {
@@ -199,6 +185,34 @@ router.get("/get-top-10-movie-anime", async (req, res) => {
     const result = await pool
       .request()
       .query(`select top 10 * from movies where category = 'AnimelFilm'`);
+    const movies = result.recordset;
+    res.json({ data: movies, success: true });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+// get top 10 movies chiến tranh
+router.get("/get-top-10-movie-war", async (req, res) => {
+  try {
+    await pool.connect();
+    const result = await pool
+      .request()
+      .query(`select top 10 * from movies where category = 'WarFilm'`);
+    const movies = result.recordset;
+    res.json({ data: movies, success: true });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+// get top 10 movies hình sự
+router.get("/get-top-10-movie-poli", async (req, res) => {
+  try {
+    await pool.connect();
+    const result = await pool
+      .request()
+      .query(`select top 10 * from movies where category = 'PolFilm'`);
     const movies = result.recordset;
     res.json({ data: movies, success: true });
   } catch (error) {
