@@ -60,7 +60,7 @@ router.get("/get-all-movie-with-cat", async (req, res) => {
       .input("offset", offset)
       .input("limit", limit)
       .query(
-        `SELECT * FROM movies WHERE category = @category ORDER BY _id OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY`
+        `SELECT * FROM movies WHERE category = @category ORDER BY _id desc OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY`
       );
 
     const movies = result.recordset;
