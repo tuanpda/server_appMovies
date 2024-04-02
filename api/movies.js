@@ -128,7 +128,7 @@ router.get("/get-top-10-movie-new-film", async (req, res) => {
     await pool.connect();
     const result = await pool
       .request()
-      .query(`select top 10 * from movies where category = 'NewMovie'`);
+      .query(`select top 10 * from movies where category = 'NewMovie' order by _id desc`);
     const movies = result.recordset;
     res.json({ data: movies, success: true });
   } catch (error) {
@@ -142,7 +142,7 @@ router.get("/get-top-10-movie-hanhdong", async (req, res) => {
     await pool.connect();
     const result = await pool
       .request()
-      .query(`select top 10 * from movies where category = 'ActionFilm'`);
+      .query(`select top 10 * from movies where category = 'ActionFilm' order by _id desc`);
     const movies = result.recordset;
     res.json({ data: movies, success: true });
   } catch (error) {
@@ -156,7 +156,7 @@ router.get("/get-top-10-movie-vothuat", async (req, res) => {
     await pool.connect();
     const result = await pool
       .request()
-      .query(`select top 10 * from movies where category = 'MartialFilm'`);
+      .query(`select top 10 * from movies where category = 'MartialFilm' order by _id desc`);
     const movies = result.recordset;
     res.json({ data: movies, success: true });
   } catch (error) {
@@ -170,7 +170,7 @@ router.get("/get-top-10-movie-kinhdi", async (req, res) => {
     await pool.connect();
     const result = await pool
       .request()
-      .query(`select top 10 * from movies where category = 'HorrorFilm'`);
+      .query(`select top 10 * from movies where category = 'HorrorFilm' order by _id desc`);
     const movies = result.recordset;
     res.json({ data: movies, success: true });
   } catch (error) {
@@ -184,7 +184,7 @@ router.get("/get-top-10-movie-anime", async (req, res) => {
     await pool.connect();
     const result = await pool
       .request()
-      .query(`select top 10 * from movies where category = 'AnimelFilm'`);
+      .query(`select top 10 * from movies where category = 'AnimelFilm' order by _id desc`);
     const movies = result.recordset;
     res.json({ data: movies, success: true });
   } catch (error) {
@@ -198,7 +198,7 @@ router.get("/get-top-10-movie-war", async (req, res) => {
     await pool.connect();
     const result = await pool
       .request()
-      .query(`select top 10 * from movies where category = 'WarFilm'`);
+      .query(`select top 10 * from movies where category = 'WarFilm' order by _id desc`);
     const movies = result.recordset;
     res.json({ data: movies, success: true });
   } catch (error) {
@@ -212,7 +212,7 @@ router.get("/get-top-10-movie-poli", async (req, res) => {
     await pool.connect();
     const result = await pool
       .request()
-      .query(`select top 10 * from movies where category = 'PolFilm'`);
+      .query(`select top 10 * from movies where category = 'PolFilm' order by _id desc`);
     const movies = result.recordset;
     res.json({ data: movies, success: true });
   } catch (error) {
