@@ -220,6 +220,34 @@ router.get("/get-top-10-movie-poli", async (req, res) => {
   }
 });
 
+// get top 10 movies tình cảm
+router.get("/get-top-10-movie-love", async (req, res) => {
+  try {
+    await pool.connect();
+    const result = await pool
+      .request()
+      .query(`select top 10 * from movies where category = 'LoveFilm' order by _id desc`);
+    const movies = result.recordset;
+    res.json({ data: movies, success: true });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+// get top 10 movies học đường
+router.get("/get-top-10-movie-student", async (req, res) => {
+  try {
+    await pool.connect();
+    const result = await pool
+      .request()
+      .query(`select top 10 * from movies where category = 'StudentFilm' order by _id desc`);
+    const movies = result.recordset;
+    res.json({ data: movies, success: true });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
 router.get("/get-one-film/:_id", async (req, res) => {
   try {
     await pool.connect();
