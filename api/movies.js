@@ -248,6 +248,20 @@ router.get("/get-top-10-movie-student", async (req, res) => {
   }
 });
 
+// get top 10 movies 18 plus
+router.get("/get-top-10-movie-18plus", async (req, res) => {
+  try {
+    await pool.connect();
+    const result = await pool
+      .request()
+      .query(`select top 10 * from movies where category = '18PlusFilm' order by _id desc`);
+    const movies = result.recordset;
+    res.json({ data: movies, success: true });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
 router.get("/get-one-film/:_id", async (req, res) => {
   try {
     await pool.connect();
