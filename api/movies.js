@@ -155,6 +155,62 @@ router.get("/get-all-movie-18-plus", async (req, res) => {
   }
 });
 
+// get film bộ movies
+router.get("/get-all-movie-phimbo", async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1; // Chuyển đổi page thành số nguyên
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const offset = (page - 1) * limit;
+    // console.log(offset);
+    // console.log(typeof(offset));
+    // const category = req.query.category;
+
+    await pool.connect();
+    const result = await pool
+      .request()
+      // .input("category", category)
+      .input("offset", offset)
+      .input("limit", limit)
+      .query(
+        `SELECT * FROM movies_series ORDER BY _id desc OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY`
+      );
+
+    const movies = result.recordset;
+
+    // Đếm tổng số lượng phim
+    const countResult = await pool
+      .request()
+      // .input("category", category)
+      .query(
+        `SELECT COUNT(*) AS totalCount FROM movies WHERE category = '18PlusFilm'`
+      );
+    const totalCount = countResult.recordset[0].totalCount;
+
+    const totalPages = Math.ceil(totalCount / limit);
+
+    const info = {
+      count: totalCount,
+      pages: totalPages,
+      next:
+        page < totalPages
+          ? `${req.path}?page=${page + 1}`
+          : null,
+      prev:
+        page > 1 ? `${req.path}?page=${page - 1}` : null,
+    };
+
+    // Tạo đối tượng JSON phản hồi
+    const response = {
+      info: info,
+      results: movies,
+    };
+
+    res.json(response);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
 // get top 10 with categories
 router.get("/get-top-10-movie-with-cat", async (req, res) => {
   try {
