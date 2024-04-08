@@ -262,6 +262,21 @@ router.get("/get-top-10-movie-slider-film", async (req, res) => {
   }
 });
 
+// get top 20 movies ngẫu nhiên trong video liên quan
+router.get("/get-top-20-movie-relative-film", async (req, res) => {
+  try {
+    await pool.connect();
+    const result = await pool
+      .request()
+      .input("category", req.query.category)
+      .query(`SELECT TOP 20 * FROM movies where category = @category ORDER BY NEWID();`);
+    const movies = result.recordset;
+    res.json({ data: movies, success: true });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
 // get top 10 movies hành động
 router.get("/get-top-10-movie-hanhdong", async (req, res) => {
   try {
