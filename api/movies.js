@@ -211,7 +211,7 @@ router.get("/get-top-10-movie-with-cat", async (req, res) => {
       .request()
       .input("category", req.query.category)
       .query(
-        `select top 10 * from movies where category = @category ORDER BY [_id] desc`
+        `select top 10 * from movies where category = @category order by createdAt`
       );
     const movies = result.recordset;
     res.json({ data: movies, success: true });
@@ -269,7 +269,7 @@ router.get("/get-top-10-movie-hanhdong", async (req, res) => {
     const result = await pool
       .request()
       .query(
-        `select top 10 * from movies where category = 'ActionFilm' order by _id desc`
+        `select top 10 * from movies where category = 'ActionFilm' order by createdAt`
       );
     const movies = result.recordset;
     res.json({ data: movies, success: true });
@@ -285,7 +285,7 @@ router.get("/get-top-10-movie-vothuat", async (req, res) => {
     const result = await pool
       .request()
       .query(
-        `select top 10 * from movies where category = 'MartialFilm' order by _id desc`
+        `select top 10 * from movies where category = 'MartialFilm' order by createdAt`
       );
     const movies = result.recordset;
     res.json({ data: movies, success: true });
@@ -301,7 +301,7 @@ router.get("/get-top-10-movie-kinhdi", async (req, res) => {
     const result = await pool
       .request()
       .query(
-        `select top 10 * from movies where category = 'HorrorFilm' order by _id desc`
+        `select top 10 * from movies where category = 'HorrorFilm' order by createdAt`
       );
     const movies = result.recordset;
     res.json({ data: movies, success: true });
@@ -317,7 +317,7 @@ router.get("/get-top-10-movie-anime", async (req, res) => {
     const result = await pool
       .request()
       .query(
-        `select top 10 * from movies where category = 'AnimelFilm' order by _id desc`
+        `select top 10 * from movies where category = 'AnimelFilm' order by createdAt`
       );
     const movies = result.recordset;
     res.json({ data: movies, success: true });
@@ -333,7 +333,7 @@ router.get("/get-top-10-movie-war", async (req, res) => {
     const result = await pool
       .request()
       .query(
-        `select top 10 * from movies where category = 'WarFilm' order by _id desc`
+        `select top 10 * from movies where category = 'WarFilm' order by createdAt`
       );
     const movies = result.recordset;
     res.json({ data: movies, success: true });
@@ -349,7 +349,7 @@ router.get("/get-top-10-movie-poli", async (req, res) => {
     const result = await pool
       .request()
       .query(
-        `select top 10 * from movies where category = 'PolFilm' order by _id desc`
+        `select top 10 * from movies where category = 'PolFilm' order by createdAt`
       );
     const movies = result.recordset;
     res.json({ data: movies, success: true });
@@ -365,7 +365,7 @@ router.get("/get-top-10-movie-love", async (req, res) => {
     const result = await pool
       .request()
       .query(
-        `select top 10 * from movies where category = 'LoveFilm' order by _id desc`
+        `select top 10 * from movies where category = 'LoveFilm' order by createdAt`
       );
     const movies = result.recordset;
     res.json({ data: movies, success: true });
@@ -381,7 +381,7 @@ router.get("/get-top-10-movie-student", async (req, res) => {
     const result = await pool
       .request()
       .query(
-        `select top 10 * from movies where category = 'StudentFilm' order by _id desc`
+        `select top 10 * from movies where category = 'StudentFilm' order by createdAt`
       );
     const movies = result.recordset;
     res.json({ data: movies, success: true });
@@ -397,7 +397,7 @@ router.get("/get-top-10-movie-18plus", async (req, res) => {
     const result = await pool
       .request()
       .query(
-        `select top 10 * from movies where category = '18PlusFilm' order by _id desc`
+        `select top 10 * from movies where category = '18PlusFilm' order by createdAt`
       );
     const movies = result.recordset;
     res.json({ data: movies, success: true });
