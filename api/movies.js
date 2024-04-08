@@ -161,29 +161,33 @@ router.get("/get-all-movie-phimbo", async (req, res) => {
     const page = parseInt(req.query.page) || 1; // Chuyển đổi page thành số nguyên
     const limit = parseInt(req.query.limit, 10) || 10;
     const offset = (page - 1) * limit;
-    // console.log(offset);
-    // console.log(typeof(offset));
-    // const category = req.query.category;
 
     await pool.connect();
+
+    // Lấy các tiêu đề duy nhất của phim bộ và phân trang kết quả
     const result = await pool
       .request()
-      // .input("category", category)
       .input("offset", offset)
       .input("limit", limit)
-      .query(
-        `SELECT * FROM movies_series ORDER BY _id desc OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY`
-      );
+      .query(`
+        SELECT DISTINCT title
+        FROM (
+          SELECT title, ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) AS row_num
+          FROM movies_series
+        ) AS sub
+        WHERE row_num > @offset
+        AND row_num <= (@offset + @limit)
+      `);
 
     const movies = result.recordset;
 
-    // Đếm tổng số lượng phim
+    // Đếm tổng số lượng phim bộ
     const countResult = await pool
       .request()
-      // .input("category", category)
-      .query(
-        `SELECT COUNT(*) AS totalCount FROM movies WHERE category = '18PlusFilm'`
-      );
+      .query(`
+        SELECT COUNT(DISTINCT title) AS totalCount
+        FROM movies_series
+      `);
     const totalCount = countResult.recordset[0].totalCount;
 
     const totalPages = Math.ceil(totalCount / limit);
@@ -191,12 +195,8 @@ router.get("/get-all-movie-phimbo", async (req, res) => {
     const info = {
       count: totalCount,
       pages: totalPages,
-      next:
-        page < totalPages
-          ? `${req.path}?page=${page + 1}`
-          : null,
-      prev:
-        page > 1 ? `${req.path}?page=${page - 1}` : null,
+      next: page < totalPages ? `${req.path}?page=${page + 1}` : null,
+      prev: page > 1 ? `${req.path}?page=${page - 1}` : null,
     };
 
     // Tạo đối tượng JSON phản hồi
@@ -210,6 +210,7 @@ router.get("/get-all-movie-phimbo", async (req, res) => {
     res.status(500).json(error);
   }
 });
+
 
 // get top 10 with categories
 router.get("/get-top-10-movie-with-cat", async (req, res) => {
