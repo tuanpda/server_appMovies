@@ -164,32 +164,32 @@ router.get("/get-all-movie-phimbo", async (req, res) => {
 
     await pool.connect();
 
-    // Lấy danh sách tiêu đề duy nhất của phim bộ
-    const distinctTitlesResult = await pool
+    // Lấy các tiêu đề duy nhất của phim bộ và phân trang kết quả
+    const result = await pool
       .request()
+      .input("offset", offset)
+      .input("limit", limit)
       .query(`
         SELECT DISTINCT title
-        FROM movies_series
-      `);
-    
-    const distinctTitles = distinctTitlesResult.recordset;
-
-    // Lấy thông tin chi tiết của từng phim dựa trên tiêu đề duy nhất
-    const movies = [];
-    for (const { title } of distinctTitles) {
-      const result = await pool
-        .request()
-        .input("title", title)
-        .query(`
-          SELECT _id, image
+        FROM (
+          SELECT title, ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) AS row_num
           FROM movies_series
-          WHERE title = @title
-        `);
-      movies.push(...result.recordset);
-    }
+        ) AS sub
+        WHERE row_num > @offset
+        AND row_num <= (@offset + @limit)
+      `);
+
+    const movies = result.recordset;
 
     // Đếm tổng số lượng phim bộ
-    const totalCount = distinctTitles.length;
+    const countResult = await pool
+      .request()
+      .query(`
+        SELECT COUNT(DISTINCT title) AS totalCount
+        FROM movies_series
+      `);
+    const totalCount = countResult.recordset[0].totalCount;
+
     const totalPages = Math.ceil(totalCount / limit);
 
     const info = {
@@ -210,8 +210,6 @@ router.get("/get-all-movie-phimbo", async (req, res) => {
     res.status(500).json(error);
   }
 });
-
-
 
 
 // get top 10 with categories
