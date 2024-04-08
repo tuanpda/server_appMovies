@@ -135,12 +135,8 @@ router.get("/get-all-movie-18-plus", async (req, res) => {
     const info = {
       count: totalCount,
       pages: totalPages,
-      next:
-        page < totalPages
-          ? `${req.path}?page=${page + 1}`
-          : null,
-      prev:
-        page > 1 ? `${req.path}?page=${page - 1}` : null,
+      next: page < totalPages ? `${req.path}?page=${page + 1}` : null,
+      prev: page > 1 ? `${req.path}?page=${page - 1}` : null,
     };
 
     // Tạo đối tượng JSON phản hồi
@@ -168,8 +164,7 @@ router.get("/get-all-movie-phimbo", async (req, res) => {
     const result = await pool
       .request()
       .input("offset", offset)
-      .input("limit", limit)
-      .query(`
+      .input("limit", limit).query(`
         SELECT title, MAX(_id) AS _id, image
         FROM movies_series
         GROUP BY title, image
@@ -181,9 +176,7 @@ router.get("/get-all-movie-phimbo", async (req, res) => {
     const movies = result.recordset;
 
     // Đếm tổng số lượng phim bộ
-    const countResult = await pool
-      .request()
-      .query(`
+    const countResult = await pool.request().query(`
         SELECT COUNT(DISTINCT title) AS totalCount
         FROM movies_series
       `);
@@ -210,8 +203,6 @@ router.get("/get-all-movie-phimbo", async (req, res) => {
   }
 });
 
-
-
 // get top 10 with categories
 router.get("/get-top-10-movie-with-cat", async (req, res) => {
   try {
@@ -219,7 +210,24 @@ router.get("/get-top-10-movie-with-cat", async (req, res) => {
     const result = await pool
       .request()
       .input("category", req.query.category)
-      .query(`select top 10 * from movies where category = @category ORDER BY [_id] desc`);
+      .query(
+        `select top 10 * from movies where category = @category ORDER BY [_id] desc`
+      );
+    const movies = result.recordset;
+    res.json({ data: movies, success: true });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+// get top 10 movies series
+router.get("/get-top-10-movie-series", async (req, res) => {
+  try {
+    await pool.connect();
+    const result = await pool.request()
+      .query(`SELECT top 10 title, MAX(_id) AS _id, image
+      FROM movies_series
+      GROUP BY title, image`);
     const movies = result.recordset;
     res.json({ data: movies, success: true });
   } catch (error) {
@@ -233,7 +241,7 @@ router.get("/get-top-10-movie-slider-film", async (req, res) => {
     await pool.connect();
     const result = await pool
       .request()
-      .query(`SELECT TOP 10 * FROM movies ORDER BY NEWID();`);
+      .query(`SELECT TOP 10 * FROM movies_series ORDER BY NEWID();`);
     const movies = result.recordset;
     res.json({ data: movies, success: true });
   } catch (error) {
@@ -247,7 +255,9 @@ router.get("/get-top-10-movie-hanhdong", async (req, res) => {
     await pool.connect();
     const result = await pool
       .request()
-      .query(`select top 10 * from movies where category = 'ActionFilm' order by _id desc`);
+      .query(
+        `select top 10 * from movies where category = 'ActionFilm' order by _id desc`
+      );
     const movies = result.recordset;
     res.json({ data: movies, success: true });
   } catch (error) {
@@ -261,7 +271,9 @@ router.get("/get-top-10-movie-vothuat", async (req, res) => {
     await pool.connect();
     const result = await pool
       .request()
-      .query(`select top 10 * from movies where category = 'MartialFilm' order by _id desc`);
+      .query(
+        `select top 10 * from movies where category = 'MartialFilm' order by _id desc`
+      );
     const movies = result.recordset;
     res.json({ data: movies, success: true });
   } catch (error) {
@@ -275,7 +287,9 @@ router.get("/get-top-10-movie-kinhdi", async (req, res) => {
     await pool.connect();
     const result = await pool
       .request()
-      .query(`select top 10 * from movies where category = 'HorrorFilm' order by _id desc`);
+      .query(
+        `select top 10 * from movies where category = 'HorrorFilm' order by _id desc`
+      );
     const movies = result.recordset;
     res.json({ data: movies, success: true });
   } catch (error) {
@@ -289,7 +303,9 @@ router.get("/get-top-10-movie-anime", async (req, res) => {
     await pool.connect();
     const result = await pool
       .request()
-      .query(`select top 10 * from movies where category = 'AnimelFilm' order by _id desc`);
+      .query(
+        `select top 10 * from movies where category = 'AnimelFilm' order by _id desc`
+      );
     const movies = result.recordset;
     res.json({ data: movies, success: true });
   } catch (error) {
@@ -303,7 +319,9 @@ router.get("/get-top-10-movie-war", async (req, res) => {
     await pool.connect();
     const result = await pool
       .request()
-      .query(`select top 10 * from movies where category = 'WarFilm' order by _id desc`);
+      .query(
+        `select top 10 * from movies where category = 'WarFilm' order by _id desc`
+      );
     const movies = result.recordset;
     res.json({ data: movies, success: true });
   } catch (error) {
@@ -317,7 +335,9 @@ router.get("/get-top-10-movie-poli", async (req, res) => {
     await pool.connect();
     const result = await pool
       .request()
-      .query(`select top 10 * from movies where category = 'PolFilm' order by _id desc`);
+      .query(
+        `select top 10 * from movies where category = 'PolFilm' order by _id desc`
+      );
     const movies = result.recordset;
     res.json({ data: movies, success: true });
   } catch (error) {
@@ -331,7 +351,9 @@ router.get("/get-top-10-movie-love", async (req, res) => {
     await pool.connect();
     const result = await pool
       .request()
-      .query(`select top 10 * from movies where category = 'LoveFilm' order by _id desc`);
+      .query(
+        `select top 10 * from movies where category = 'LoveFilm' order by _id desc`
+      );
     const movies = result.recordset;
     res.json({ data: movies, success: true });
   } catch (error) {
@@ -345,7 +367,9 @@ router.get("/get-top-10-movie-student", async (req, res) => {
     await pool.connect();
     const result = await pool
       .request()
-      .query(`select top 10 * from movies where category = 'StudentFilm' order by _id desc`);
+      .query(
+        `select top 10 * from movies where category = 'StudentFilm' order by _id desc`
+      );
     const movies = result.recordset;
     res.json({ data: movies, success: true });
   } catch (error) {
@@ -359,7 +383,9 @@ router.get("/get-top-10-movie-18plus", async (req, res) => {
     await pool.connect();
     const result = await pool
       .request()
-      .query(`select top 10 * from movies where category = '18PlusFilm' order by _id desc`);
+      .query(
+        `select top 10 * from movies where category = '18PlusFilm' order by _id desc`
+      );
     const movies = result.recordset;
     res.json({ data: movies, success: true });
   } catch (error) {
@@ -380,4 +406,21 @@ router.get("/get-one-film/:_id", async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 });
+
+router.get("/get-one-film-series/:_id", async (req, res) => {
+  try {
+    await pool.connect();
+    const result = await pool
+      .request()
+      .input("_id", req.params._id)
+      .query(`select * from movies_series where _id=@_id`);
+    const movies = result.recordset;
+    res.json({ data: movies, success: true });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+
+
 module.exports = router;
