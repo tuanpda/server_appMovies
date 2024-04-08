@@ -170,13 +170,12 @@ router.get("/get-all-movie-phimbo", async (req, res) => {
       .input("offset", offset)
       .input("limit", limit)
       .query(`
-        SELECT DISTINCT title
-        FROM (
-          SELECT title, ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) AS row_num
-          FROM movies_series
-        ) AS sub
-        WHERE row_num > @offset
-        AND row_num <= (@offset + @limit)
+        SELECT title, MAX(_id) AS max_id, image
+        FROM movies_series
+        GROUP BY title, image
+        ORDER BY max_id DESC
+        OFFSET @offset ROWS
+        FETCH NEXT @limit ROWS ONLY
       `);
 
     const movies = result.recordset;
@@ -210,6 +209,7 @@ router.get("/get-all-movie-phimbo", async (req, res) => {
     res.status(500).json(error);
   }
 });
+
 
 
 // get top 10 with categories
