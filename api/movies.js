@@ -137,10 +137,10 @@ router.get("/get-all-movie-18-plus", async (req, res) => {
       pages: totalPages,
       next:
         page < totalPages
-          ? `${req.path}?page=${page + 1}&category=${category}`
+          ? `${req.path}?page=${page + 1}`
           : null,
       prev:
-        page > 1 ? `${req.path}?page=${page - 1}&category=${category}` : null,
+        page > 1 ? `${req.path}?page=${page - 1}` : null,
     };
 
     // Tạo đối tượng JSON phản hồi
