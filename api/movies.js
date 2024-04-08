@@ -235,6 +235,19 @@ router.get("/get-top-10-movie-series", async (req, res) => {
   }
 });
 
+// get tất cả các tập phim
+router.get("/get-all-tap-film-bo-with-tile", async (req, res) => {
+  try {
+    await pool.connect();
+    const result = await pool.request().input('title', req.query.title)
+      .query(`SELECT * from movies_series where title = @title`);
+    const movies = result.recordset;
+    res.json({ data: movies, success: true });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
 // get top 10 movies ngẫu nhiên
 router.get("/get-top-10-movie-slider-film", async (req, res) => {
   try {
