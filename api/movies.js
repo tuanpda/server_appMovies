@@ -170,10 +170,10 @@ router.get("/get-all-movie-phimbo", async (req, res) => {
       .input("offset", offset)
       .input("limit", limit)
       .query(`
-        SELECT title, MAX(_id) AS max_id, image
+        SELECT title, MAX(_id) AS _id, image
         FROM movies_series
         GROUP BY title, image
-        ORDER BY max_id DESC
+        ORDER BY _id DESC
         OFFSET @offset ROWS
         FETCH NEXT @limit ROWS ONLY
       `);
