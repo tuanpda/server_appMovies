@@ -241,7 +241,7 @@ router.get("/get-top-10-movie-slider-film", async (req, res) => {
     await pool.connect();
     const result = await pool
       .request()
-      .query(`SELECT TOP 10 * FROM movies_series ORDER BY NEWID();`);
+      .query(`SELECT TOP 10 * FROM movies ORDER BY NEWID();`);
     const movies = result.recordset;
     res.json({ data: movies, success: true });
   } catch (error) {
