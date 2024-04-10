@@ -405,6 +405,182 @@ router.get("/get-top-10-movie-student", async (req, res) => {
   }
 });
 
+// get top 10 movies thể thao
+router.get("/get-top-10-movie-sport", async (req, res) => {
+  try {
+    await pool.connect();
+    const result = await pool
+      .request()
+      .query(
+        `select top 10 * from movies where category = 'SportFilm' order by createdAt`
+      );
+    const movies = result.recordset;
+    res.json({ data: movies, success: true });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+// get top 10 movies viễn tưởng
+router.get("/get-top-10-movie-fiction", async (req, res) => {
+  try {
+    await pool.connect();
+    const result = await pool
+      .request()
+      .query(
+        `select top 10 * from movies where category = 'FictionlFilm' order by createdAt`
+      );
+    const movies = result.recordset;
+    res.json({ data: movies, success: true });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+// get top 10 movies kinh điển
+router.get("/get-top-10-movie-classic", async (req, res) => {
+  try {
+    await pool.connect();
+    const result = await pool
+      .request()
+      .query(
+        `select top 10 * from movies where category = 'ClassicFilm' order by createdAt`
+      );
+    const movies = result.recordset;
+    res.json({ data: movies, success: true });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+// get top 10 movies tâm lý
+router.get("/get-top-10-movie-tamly", async (req, res) => {
+  try {
+    await pool.connect();
+    const result = await pool
+      .request()
+      .query(
+        `select top 10 * from movies where category = 'SoulFilm' order by createdAt`
+      );
+    const movies = result.recordset;
+    res.json({ data: movies, success: true });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+// get top 10 movies music
+router.get("/get-top-10-movie-music", async (req, res) => {
+  try {
+    await pool.connect();
+    const result = await pool
+      .request()
+      .query(
+        `select top 10 * from movies where category = 'MusicFilm' order by createdAt`
+      );
+    const movies = result.recordset;
+    res.json({ data: movies, success: true });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+// get top 10 movies bí ẩn
+router.get("/get-top-10-movie-bian", async (req, res) => {
+  try {
+    await pool.connect();
+    const result = await pool
+      .request()
+      .query(
+        `select top 10 * from movies where category = 'SecretFilm' order by createdAt`
+      );
+    const movies = result.recordset;
+    res.json({ data: movies, success: true });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+// get top 10 movies cổ trang
+router.get("/get-top-10-movie-cotrang", async (req, res) => {
+  try {
+    await pool.connect();
+    const result = await pool
+      .request()
+      .query(
+        `select top 10 * from movies where category = 'CotrangFilm' order by createdAt`
+      );
+    const movies = result.recordset;
+    res.json({ data: movies, success: true });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+// get top 10 movies funny
+router.get("/get-top-10-movie-haihuoc", async (req, res) => {
+  try {
+    await pool.connect();
+    const result = await pool
+      .request()
+      .query(
+        `select top 10 * from movies where category = 'FunnyFilm' order by createdAt`
+      );
+    const movies = result.recordset;
+    res.json({ data: movies, success: true });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+// get top 10 movies chinhkich
+router.get("/get-top-10-movie-chinkich", async (req, res) => {
+  try {
+    await pool.connect();
+    const result = await pool
+      .request()
+      .query(
+        `select top 10 * from movies where category = 'ChinhkichFilm' order by createdAt`
+      );
+    const movies = result.recordset;
+    res.json({ data: movies, success: true });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+// get top 10 movies thanthoai
+router.get("/get-top-10-movie-thanthoai", async (req, res) => {
+  try {
+    await pool.connect();
+    const result = await pool
+      .request()
+      .query(
+        `select top 10 * from movies where category = 'ThanthoaiFilm' order by createdAt`
+      );
+    const movies = result.recordset;
+    res.json({ data: movies, success: true });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+// get top 10 movies gia đình
+router.get("/get-top-10-movie-family", async (req, res) => {
+  try {
+    await pool.connect();
+    const result = await pool
+      .request()
+      .query(
+        `select top 10 * from movies where category = 'FamilyFilm' order by createdAt`
+      );
+    const movies = result.recordset;
+    res.json({ data: movies, success: true });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
 // get top 10 movies 18 plus
 router.get("/get-top-10-movie-18plus", async (req, res) => {
   try {
