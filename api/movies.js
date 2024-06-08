@@ -1,18 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { pool } = require("../database/dbinfo");
-
-// get all movies
-// router.get("/get-all-movie", async (req, res) => {
-//   try {
-//     await pool.connect();
-//     const result = await pool.request().query(`SELECT * FROM movies`);
-//     const movies = result.recordset;
-//     res.json({ data: movies, success: true });
-//   } catch (error) {
-//     res.status(500).json(error);
-//   }
-// });
+const axios = require("axios");
 
 // get all title of movies
 router.get("/names-of-movies", async (req, res) => {
@@ -45,6 +34,7 @@ router.get("/get-film-with-title", async (req, res) => {
 
 // get movie with category
 router.get("/get-all-movie-with-cat", async (req, res) => {
+  // console.log(req.query);
   try {
     const page = parseInt(req.query.page) || 1; // Chuyển đổi page thành số nguyên
     const limit = parseInt(req.query.limit, 10) || 10;
@@ -220,12 +210,12 @@ router.get("/get-top-10-movie-with-cat", async (req, res) => {
   }
 });
 
-// get top 10 movies series
+// get top 12 movies series
 router.get("/get-top-10-movie-series", async (req, res) => {
   try {
     await pool.connect();
     const result = await pool.request()
-      .query(`SELECT top 10 title, MAX(_id) AS _id, image
+      .query(`SELECT top 12 title, MAX(_id) AS _id, image
       FROM movies_series
       GROUP BY title, image`);
     const movies = result.recordset;
@@ -239,7 +229,9 @@ router.get("/get-top-10-movie-series", async (req, res) => {
 router.get("/get-all-tap-film-bo-with-tile", async (req, res) => {
   try {
     await pool.connect();
-    const result = await pool.request().input('title', req.query.title)
+    const result = await pool
+      .request()
+      .input("title", req.query.title)
       .query(`SELECT * from movies_series where title = @title`);
     const movies = result.recordset;
     res.json({ data: movies, success: true });
@@ -262,14 +254,16 @@ router.get("/get-top-10-movie-slider-film", async (req, res) => {
   }
 });
 
-// get top 20 movies ngẫu nhiên trong video liên quan
-router.get("/get-top-20-movie-relative-film", async (req, res) => {
+// get top 12 movies ngẫu nhiên trong video liên quan
+router.get("/get-top-12-movie-relative-film", async (req, res) => {
   try {
     await pool.connect();
     const result = await pool
       .request()
       .input("category", req.query.category)
-      .query(`SELECT TOP 20 * FROM movies where category = @category ORDER BY NEWID();`);
+      .query(
+        `SELECT TOP 12 * FROM movies where category = @category ORDER BY createdAt desc;`
+      );
     const movies = result.recordset;
     res.json({ data: movies, success: true });
   } catch (error) {
@@ -277,15 +271,50 @@ router.get("/get-top-20-movie-relative-film", async (req, res) => {
   }
 });
 
-// get top 10 movies hành động
+// get top 12 movies ngẫu nhiên trong video liên quan phim bộ
+router.get("/get-top-12-movie-relative-film-series", async (req, res) => {
+  try {
+    await pool.connect();
+    const result = await pool
+      .request()
+      .input("category", req.query.category)
+      .query(
+        `SELECT top 12 title, MAX(_id) AS _id, image, createdAt
+        FROM movies_series
+        GROUP BY title, image, createdAt ORDER BY createdAt desc;`
+      );
+    const movies = result.recordset;
+    res.json({ data: movies, success: true });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+// get top movies hành động
 router.get("/get-top-10-movie-hanhdong", async (req, res) => {
   try {
     await pool.connect();
     const result = await pool
       .request()
       .query(
-        `select top 10 * from movies where category = 'ActionFilm' order by createdAt`
+        `select top 12 * from movies where category = 'ActionFilm' order by createdAt desc`
       );
+    const movies = result.recordset;
+    res.json({ data: movies, success: true });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+// get top 10 movies lẻ
+router.get("/get-top-12-movie-single", async (req, res) => {
+  try {
+    await pool.connect();
+    const result = await pool.request().query(
+      `select top 12 * from movies where category <> 'ActionFilm' and category <> '18PlusFilm'
+        and category <> 'AnimelFilm' and category <> 'AnimelFilm' 
+        order by createdAt desc`
+    );
     const movies = result.recordset;
     res.json({ data: movies, success: true });
   } catch (error) {
@@ -325,14 +354,14 @@ router.get("/get-top-10-movie-kinhdi", async (req, res) => {
   }
 });
 
-// get top 10 movies kinh dị
+// get top 12 movies kinh dị
 router.get("/get-top-10-movie-anime", async (req, res) => {
   try {
     await pool.connect();
     const result = await pool
       .request()
       .query(
-        `select top 10 * from movies where category = 'AnimelFilm' order by createdAt`
+        `select top 12 * from movies where category = 'AnimelFilm' order by createdAt desc`
       );
     const movies = result.recordset;
     res.json({ data: movies, success: true });
@@ -588,7 +617,53 @@ router.get("/get-top-10-movie-18plus", async (req, res) => {
     const result = await pool
       .request()
       .query(
-        `select top 10 * from movies where category = '18PlusFilm' order by createdAt`
+        `select top 12 * from movies where category = '18PlusFilm' order by createdAt desc`
+      );
+    const movies = result.recordset;
+    res.json({ data: movies, success: true });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+// search for movies
+router.get("/search-movie", async (req, res) => {
+  // console.log(req.query.query);
+  try {
+    const searchQuery = req.query.query
+    await pool.connect();
+    const result = await pool
+      .request()
+      .query(
+        `SELECT * FROM movies
+        WHERE title COLLATE SQL_Latin1_General_CP1_CI_AI LIKE N'%${searchQuery}%' order by createdAt desc;`
+      );
+    const movies = result.recordset;
+    res.json({ data: movies, success: true });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+// search for movies - series
+router.get("/search-movie-series", async (req, res) => {
+  // console.log(req.query.query);
+  try {
+    const searchQuery = req.query.query
+    await pool.connect();
+    const result = await pool
+      .request()
+      .query(
+        `WITH CTE AS (
+          SELECT *,
+                 ROW_NUMBER() OVER (PARTITION BY title ORDER BY createdAt DESC) AS rn
+          FROM movies_series
+          WHERE title COLLATE SQL_Latin1_General_CP1_CI_AI LIKE N'%${searchQuery}%'
+          )
+          SELECT *
+          FROM CTE
+          WHERE rn = 1
+          ORDER BY createdAt DESC;`
       );
     const movies = result.recordset;
     res.json({ data: movies, success: true });
@@ -624,7 +699,5 @@ router.get("/get-one-film-series/:_id", async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 });
-
-
 
 module.exports = router;
