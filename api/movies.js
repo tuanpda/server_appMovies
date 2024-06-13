@@ -297,7 +297,7 @@ router.get("/get-top-10-movie-hanhdong", async (req, res) => {
     const result = await pool
       .request()
       .query(
-        `select top 12 * from movies where category = 'ActionFilm' order by createdAt desc`
+        `select top 12 * from movies where category = 'ActionFilm' ORDER BY NEWID();`
       );
     const movies = result.recordset;
     res.json({ data: movies, success: true });
