@@ -50,7 +50,7 @@ router.get("/get-all-movie-with-cat", async (req, res) => {
       .input("offset", offset)
       .input("limit", limit)
       .query(
-        `SELECT * FROM movies WHERE category = @category ORDER BY _id desc OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY`
+        `SELECT * FROM movies WHERE category = @category ORDER BY NEWID() desc OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY`
       );
 
     const movies = result.recordset;
@@ -217,7 +217,7 @@ router.get("/get-top-10-movie-series", async (req, res) => {
     const result = await pool.request()
       .query(`SELECT top 12 title, MAX(_id) AS _id, image
       FROM movies_series
-      GROUP BY title, image`);
+      GROUP BY title, image ORDER BY NEWID()`);
     const movies = result.recordset;
     res.json({ data: movies, success: true });
   } catch (error) {
@@ -361,7 +361,7 @@ router.get("/get-top-10-movie-anime", async (req, res) => {
     const result = await pool
       .request()
       .query(
-        `select top 12 * from movies where category = 'AnimelFilm' order by createdAt desc`
+        `select top 12 * from movies where category = 'AnimelFilm' order by newid()`
       );
     const movies = result.recordset;
     res.json({ data: movies, success: true });
@@ -617,7 +617,7 @@ router.get("/get-top-10-movie-18plus", async (req, res) => {
     const result = await pool
       .request()
       .query(
-        `select top 12 * from movies where category = '18PlusFilm' order by createdAt desc`
+        `select top 12 * from movies where category = '18PlusFilm' order by newid()`
       );
     const movies = result.recordset;
     res.json({ data: movies, success: true });
