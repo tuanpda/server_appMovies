@@ -10,10 +10,10 @@ const https = require('https');
 const app = express();
 dotenv.config();
 
-const options = {
-    key: fs.readFileSync('server.key'),
-    cert: fs.readFileSync('server.crt')
-};
+// const options = {
+//     key: fs.readFileSync('server.key'),
+//     cert: fs.readFileSync('server.crt')
+// };
 
 app.use(cors());
 app.use(morgan("dev"));
@@ -35,11 +35,11 @@ app.get('/', (req, res) => {
 app.use('/api/users', require('./api/users'));
 app.use('/api/tochucdvt', require('./api/tochucdvt'));
 
-// app.listen(process.env.PORT, () => {
-//     console.log(`Server started running on ${process.env.PORT} for ${process.env.NODE_ENV}`);
-// }); bỏ phần này vì sẽ dùng https
-
-// Tạo máy chủ HTTPS
-https.createServer(options, app).listen(process.env.PORT, () => {
+app.listen(process.env.PORT, () => {
     console.log(`Server started running on ${process.env.PORT} for ${process.env.NODE_ENV}`);
 });
+
+// Tạo máy chủ HTTPS
+// https.createServer(options, app).listen(process.env.PORT, () => {
+//     console.log(`Server started running on ${process.env.PORT} for ${process.env.NODE_ENV}`);
+// });

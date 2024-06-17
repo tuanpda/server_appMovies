@@ -262,7 +262,7 @@ router.get("/get-top-12-movie-relative-film", async (req, res) => {
       .request()
       .input("category", req.query.category)
       .query(
-        `SELECT TOP 12 * FROM movies where category = @category ORDER BY createdAt desc;`
+        `SELECT TOP 12 * FROM movies where category = @category ORDER BY newid()`
       );
     const movies = result.recordset;
     res.json({ data: movies, success: true });
@@ -281,7 +281,7 @@ router.get("/get-top-12-movie-relative-film-series", async (req, res) => {
       .query(
         `SELECT top 12 title, MAX(_id) AS _id, image, createdAt
         FROM movies_series
-        GROUP BY title, image, createdAt ORDER BY createdAt desc;`
+        GROUP BY title, image, createdAt ORDER BY newid();`
       );
     const movies = result.recordset;
     res.json({ data: movies, success: true });
