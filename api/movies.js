@@ -3,6 +3,27 @@ const router = express.Router();
 const { pool } = require("../database/dbinfo");
 const axios = require("axios");
 
+// API ghi thông tin lượt xem
+router.post("/update-view-count/:_id", async (req, res) => {
+  try {
+    // console.log(req.params._id);
+    const movieId = req.params._id;
+    await pool.connect();
+    const result = await pool
+      .request()
+      .input("_id", movieId)
+      .query(`UPDATE movies SET view_count = view_count + 1 WHERE _id = @_id`);
+
+    if (result.rowsAffected[0] === 0) {
+      res.status(404).json({ success: false, message: "Movie not found" });
+    } else {
+      res.json({ success: true, message: "View count updated successfully" });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 // get all title of movies
 router.get("/names-of-movies", async (req, res) => {
   try {
@@ -630,14 +651,12 @@ router.get("/get-top-10-movie-18plus", async (req, res) => {
 router.get("/search-movie", async (req, res) => {
   // console.log(req.query.query);
   try {
-    const searchQuery = req.query.query
+    const searchQuery = req.query.query;
     await pool.connect();
-    const result = await pool
-      .request()
-      .query(
-        `SELECT * FROM movies
+    const result = await pool.request().query(
+      `SELECT * FROM movies
         WHERE title COLLATE SQL_Latin1_General_CP1_CI_AI LIKE N'%${searchQuery}%' order by createdAt desc;`
-      );
+    );
     const movies = result.recordset;
     res.json({ data: movies, success: true });
   } catch (error) {
@@ -649,12 +668,10 @@ router.get("/search-movie", async (req, res) => {
 router.get("/search-movie-series", async (req, res) => {
   // console.log(req.query.query);
   try {
-    const searchQuery = req.query.query
+    const searchQuery = req.query.query;
     await pool.connect();
-    const result = await pool
-      .request()
-      .query(
-        `WITH CTE AS (
+    const result = await pool.request().query(
+      `WITH CTE AS (
           SELECT *,
                  ROW_NUMBER() OVER (PARTITION BY title ORDER BY createdAt DESC) AS rn
           FROM movies_series
@@ -664,7 +681,7 @@ router.get("/search-movie-series", async (req, res) => {
           FROM CTE
           WHERE rn = 1
           ORDER BY createdAt DESC;`
-      );
+    );
     const movies = result.recordset;
     res.json({ data: movies, success: true });
   } catch (error) {
